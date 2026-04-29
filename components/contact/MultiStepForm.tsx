@@ -7,10 +7,8 @@ import {
     ChevronRight, Layout, CheckCircle2,
     Calendar, MapPin, MessageSquare,
     Tag, User, Phone, Mail,
-    Check, Sparkles, Building2, ArrowLeft,
-    Search
+    Check, Sparkles, Building2, ArrowLeft
 } from "lucide-react";
-import { AREAS_WE_SERVE } from "@/lib/data/areas";
 import { SERVICES_DATA } from "@/lib/data/services";
 import { Button } from "@/components/ui/button";
 import { LocationSearch } from "./LocationSearch";
@@ -84,6 +82,7 @@ function FormContent() {
     const serviceParam = searchParams.get("service");
     const projectParam = searchParams.get("project");
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [mounted, setMounted] = useState(false);
     const [hydrated, setHydrated] = useState(false);
     const [data, setData] = useState<FormData>(initialData);

@@ -193,8 +193,8 @@ export default function LeadPopup() {
                                             <label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
                                                 <CheckCircle2 className="w-3 h-3" /> Location
                                             </label>
-                                            <LocationSearch 
-                                                value={data.location} 
+                                            <LocationSearch
+                                                value={data.location}
                                                 onChange={(v) => setData({ ...data, location: v })}
                                                 placeholder="Select area"
                                             />
@@ -223,7 +223,7 @@ export default function LeadPopup() {
                                 </motion.div>
                                 <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter mb-2">🎉 Thanks!</h3>
                                 <p className="text-slate-600 font-bold text-sm mb-8">Our expert will contact you shortly</p>
-                                
+
                                 <Button
                                     onClick={() => {
                                         setIsVisible(false);
