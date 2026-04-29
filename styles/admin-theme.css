@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --admin-bg: #F8FAFC;
+  --admin-card-bg: #FFFFFF;
+  --admin-border: #E5E7EB;
+  --admin-primary: #6366F1;
+  --admin-primary-end: #8B5CF6;
+  --admin-text-primary: #0F172A;
+  --admin-text-secondary: #64748B;
+}
+
+.admin-theme {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--admin-bg);
+  color: var(--admin-text-primary);
+}
+
+.admin-card {
+  background: var(--admin-card-bg);
+  border: 1px solid var(--admin-border);
+  border-radius: 0.75rem; /* rounded-xl */
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); /* shadow-sm */
+}
+
+.admin-card-hover {
+  transition: all 0.2s ease-in-out;
+}
+
+.admin-card-hover:hover {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* shadow-md */
+}
+
+.admin-gradient-text {
+  background: linear-gradient(to right, var(--admin-primary), var(--admin-primary-end));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.admin-gradient-bg {
+  background: linear-gradient(to right, var(--admin-primary), var(--admin-primary-end));
+}
+
+.sidebar-active {
+  background: linear-gradient(to right, var(--admin-primary), var(--admin-primary-end));
+  color: white !important;
+}
+
+.table-sticky-header th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #F9FAFB;
+}
