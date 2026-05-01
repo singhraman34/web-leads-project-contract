@@ -94,6 +94,21 @@ function FormContent() {
 
     useEffect(() => {
         setMounted(true);
+
+        const hasScrolled = sessionStorage.getItem("quote_auto_scrolled");
+        if (!hasScrolled) {
+            const timer = setTimeout(() => {
+                if (window.scrollY < 100) {
+                    const el = document.getElementById("quote-form-section");
+                    if (el) {
+                        const y = el.getBoundingClientRect().top + window.scrollY - 100;
+                        window.scrollTo({ top: y, behavior: "smooth" });
+                    }
+                }
+                sessionStorage.setItem("quote_auto_scrolled", "true");
+            }, 400);
+            return () => clearTimeout(timer);
+        }
     }, []);
 
     useEffect(() => {
@@ -113,7 +128,7 @@ function FormContent() {
         if (saved) {
             try {
                 newData = { ...newData, ...JSON.parse(saved) };
-            } catch {}
+            } catch { }
         }
 
         if (leadData) {
@@ -125,7 +140,7 @@ function FormContent() {
                     phone: (!newData.phone || newData.phone === "+91 ") ? phone : newData.phone,
                     area: newData.area || location
                 };
-            } catch {}
+            } catch { }
         }
 
         setData(newData);
@@ -156,7 +171,7 @@ function FormContent() {
 
     const handleBasicSubmit = async () => {
         if (!isStep1Complete || isSubmitting) return;
-        
+
         setIsSubmitting(true);
         try {
             setDirection(1);
@@ -184,15 +199,15 @@ function FormContent() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         // 1. Honeypot Verification (Local)
         if (data.botField) {
-            setIsSubmitted(true); 
+            setIsSubmitted(true);
             return;
         }
 
         if (!isStep3Complete || isSubmitting) return;
-        
+
         setIsSubmitting(true);
         setSubmitError(null);
 
@@ -276,7 +291,7 @@ function FormContent() {
     }
 
     return (
-        <div className="w-full max-w-5xl mx-auto px-4 md:px-0">
+        <div id="quote-form-section" className="w-full max-w-5xl mx-auto px-4 md:px-0">
             <motion.div
                 layout
                 className="bg-white border border-slate-100 rounded-[2.5rem] shadow-[0_48px_96px_-24px_rgba(0,0,0,0.12)] relative overflow-hidden"
@@ -301,8 +316,8 @@ function FormContent() {
                                 <span className="text-[9px] font-black text-primary uppercase tracking-widest">{Math.round(progress)}%</span>
                             </div>
                             <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
-                                <motion.div 
-                                    className="h-full bg-slate-900" 
+                                <motion.div
+                                    className="h-full bg-slate-900"
                                     initial={{ width: 0 }}
                                     animate={{ width: `${progress}%` }}
                                     transition={{ duration: 0.5, ease: "easeOut" }}
@@ -347,7 +362,7 @@ function FormContent() {
                                             <MapPin className="w-5 h-5 text-slate-900" /> Select Your Area (Mumbai) <span className="text-red-500">*</span>
                                         </label>
                                         <LocationSearch value={hydrated ? data.area : ""} onChange={(v) => updateData({ area: v })} />
-                                        
+
                                         <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-2 flex items-center gap-2">
                                             <Sparkles className="w-3 h-3" /> Currently serving Mumbai only
                                         </p>
@@ -530,8 +545,10 @@ function FormContent() {
                                 </div>
 
                                 {submitError && (
-                                    <div className="p-5 bg-red-50 border border-red-100 rounded-2xl text-red-600 text-xs font-bold flex items-center gap-3">
-                                        <span className="w-1.5 h-1.5 bg-red-600 rounded-full" /> {submitError}
+                                    <div className="p-5 bg-red-50 border border-red-100 rounded-2xl text-red-600 text-xs font-bold flex flex-col gap-2">
+                                        <div className="flex items-center gap-3">
+                                            <span className="w-1.5 h-1.5 bg-red-600 rounded-full" /> {submitError}
+                                        </div>
                                     </div>
                                 )}
 

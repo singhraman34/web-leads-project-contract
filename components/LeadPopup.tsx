@@ -64,6 +64,7 @@ export default function LeadPopup() {
     const { isVisible, setIsVisible } = usePopupTrigger();
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState<string | null>(null);
     const [data, setData] = useState({
         name: "",
         phone: "",
@@ -102,13 +103,15 @@ export default function LeadPopup() {
             });
 
             if (!response.ok) {
-                console.error("API Error: Failed to submit partial lead");
+                const errorData = await response.json();
+                throw new Error(errorData.error || "Failed to submit partial lead");
             }
 
             localStorage.setItem("leadSubmitted", "true");
             setIsSubmitted(true);
         } catch (error) {
             console.error("Popup submission failed", error);
+            setSubmitError(error instanceof Error ? error.message : "Something went wrong. Please try again.");
         } finally {
             setIsSubmitting(false);
         }
@@ -196,9 +199,15 @@ export default function LeadPopup() {
                                             <LocationSearch
                                                 value={data.location}
                                                 onChange={(v) => setData({ ...data, location: v })}
-                                                placeholder="Select area"
+                                                placeholder="Search, select, or enter your location"
                                             />
                                         </div>
+
+                                        {submitError && (
+                                            <div className="p-3 bg-red-50 border border-red-100 rounded-xl text-red-600 text-[10px] font-bold flex items-center gap-2">
+                                                <span className="w-1.5 h-1.5 bg-red-600 rounded-full" /> {submitError}
+                                            </div>
+                                        )}
 
                                         <div className="pt-4">
                                             <Button
