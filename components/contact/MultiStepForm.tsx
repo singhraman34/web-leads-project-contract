@@ -96,6 +96,26 @@ function FormContent() {
     useEffect(() => {
         setMounted(true);
 
+        // 1. Hydration Logic
+        if (typeof window !== "undefined") {
+            const popupData = sessionStorage.getItem("leadPopupData");
+            if (popupData) {
+                try {
+                    const parsed = JSON.parse(popupData);
+                    setData(prev => ({
+                        ...prev,
+                        name: parsed.name || prev.name || "",
+                        phone: parsed.phone || prev.phone || "",
+                        area: parsed.location || parsed.area || prev.area || ""
+                    }));
+                } catch (err) {
+                    console.error("Popup hydration failed", err);
+                }
+            }
+            setHydrated(true);
+        }
+
+        // 2. Auto-scroll Logic
         const hasScrolled = sessionStorage.getItem("quote_auto_scrolled");
         if (!hasScrolled) {
             const timer = setTimeout(() => {
@@ -121,36 +141,22 @@ function FormContent() {
     }, [serviceParam, projectParam]);
 
     useEffect(() => {
-        const saved = localStorage.getItem("quote_v3_data");
-        const leadData = localStorage.getItem("lead_data");
+        if (typeof window === "undefined") return;
 
-        let newData = { ...initialData };
+        // Prevent browser cache restore (back-forward cache)
+        const handlePageShow = (event: PageTransitionEvent) => {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        };
 
-        if (saved) {
-            try {
-                newData = { ...newData, ...JSON.parse(saved) };
-            } catch { }
-        }
+        window.history.replaceState({}, document.title);
+        window.addEventListener("pageshow", handlePageShow);
 
-        if (leadData) {
-            try {
-                const { name, phone, location } = JSON.parse(leadData);
-                newData = {
-                    ...newData,
-                    name: newData.name || name,
-                    phone: (!newData.phone || newData.phone === "+91 ") ? phone : newData.phone,
-                    area: newData.area || location
-                };
-            } catch { }
-        }
-
-        setData(newData);
-        setHydrated(true);
+        return () => {
+            window.removeEventListener("pageshow", handlePageShow);
+        };
     }, []);
-
-    useEffect(() => {
-        localStorage.setItem("quote_v3_data", JSON.stringify(data));
-    }, [data]);
 
     const updateData = (fields: Partial<FormData>) => setData(prev => ({ ...prev, ...fields }));
 
@@ -277,6 +283,7 @@ function FormContent() {
             if (response.ok) {
                 setIsSubmitted(true);
                 localStorage.removeItem("quote_v3_data");
+                sessionStorage.removeItem("leadPopupData"); // Clear data after successful submission
             } else {
                 const errorData = await response.json();
                 throw new Error(errorData.error || "Server failed to process lead");
@@ -377,6 +384,8 @@ function FormContent() {
                                         </label>
                                         <input
                                             type="text"
+                                            name="lead_name_field"
+                                            autoComplete="new-password"
                                             placeholder="John Doe"
                                             value={hydrated ? data.name : ""}
                                             onChange={(e) => updateData({ name: e.target.value })}
@@ -391,6 +400,8 @@ function FormContent() {
                                             <span className="pl-6 pr-3 py-5 font-bold text-slate-900 text-base">+91</span>
                                             <input
                                                 type="tel"
+                                                name="lead_phone_field"
+                                                autoComplete="new-password"
                                                 placeholder="9876543210"
                                                 value={hydrated ? data.phone : ""}
                                                 onChange={(e) => updateData({ phone: e.target.value.replace(/\D/g, "").slice(0, 10) })}
@@ -404,6 +415,8 @@ function FormContent() {
                                         </label>
                                         <input
                                             type="email"
+                                            name="lead_email_field"
+                                            autoComplete="new-password"
                                             placeholder="you@example.com"
                                             value={hydrated ? data.email : ""}
                                             onChange={(e) => updateData({ email: e.target.value })}

@@ -48,7 +48,7 @@ export default function QuickEstimateSection() {
                     >
                         <div className="absolute top-0 right-0 w-32 h-32 bg-[#C9A96A]/5 -mr-16 -mt-16 rounded-full" />
                         
-                        <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
+                        <form autoComplete="off" onSubmit={handleSubmit} className="space-y-6 relative z-10">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
                                     <label className="text-xs font-black uppercase text-slate-400 tracking-widest px-1">Project Type</label>
@@ -64,6 +64,8 @@ export default function QuickEstimateSection() {
                                     <label className="text-xs font-black uppercase text-slate-400 tracking-widest px-1">Area Size (sq ft)</label>
                                     <input 
                                         type="number" 
+                                        name="lead_area_size_field"
+                                        autoComplete="new-password"
                                         placeholder="e.g. 5000"
                                         className="w-full h-14 bg-slate-50 border border-slate-200 rounded-xl px-4 text-slate-900 focus:outline-none focus:border-[#C9A96A] transition-colors"
                                     />
@@ -72,6 +74,8 @@ export default function QuickEstimateSection() {
                                     <label className="text-xs font-black uppercase text-slate-400 tracking-widest px-1">Location</label>
                                     <input 
                                         type="text" 
+                                        name="lead_location_field"
+                                        autoComplete="new-password"
                                         placeholder="e.g. South Mumbai"
                                         className="w-full h-14 bg-slate-50 border border-slate-200 rounded-xl px-4 text-slate-900 focus:outline-none focus:border-[#C9A96A] transition-colors"
                                     />

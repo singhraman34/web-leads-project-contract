@@ -87,7 +87,7 @@ export default function LeadPopup() {
 
         setIsSubmitting(true);
         try {
-            localStorage.setItem("lead_data", JSON.stringify(data));
+            sessionStorage.setItem("leadPopupData", JSON.stringify(data));
 
             const response = await fetch("/api/contact", {
                 method: "POST",
@@ -160,13 +160,15 @@ export default function LeadPopup() {
                                         <p className="text-slate-400 text-[11px] font-bold uppercase tracking-wider mt-2">Book a slot with our top architects</p>
                                     </div>
 
-                                    <form onSubmit={handleSubmit} className="space-y-5">
+                                    <form autoComplete="off" onSubmit={handleSubmit} className="space-y-5">
                                         <div className="space-y-2">
                                             <label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
                                                 <User className="w-3 h-3" /> Full Name
                                             </label>
                                             <input
                                                 type="text"
+                                                name="lead_name_field"
+                                                autoComplete="new-password"
                                                 placeholder="John Doe"
                                                 required
                                                 value={data.name}
@@ -183,6 +185,8 @@ export default function LeadPopup() {
                                                 <span className="pl-5 pr-2 py-4 font-bold text-slate-900 text-sm">+91</span>
                                                 <input
                                                     type="tel"
+                                                    name="lead_phone_field"
+                                                    autoComplete="new-password"
                                                     placeholder="9876543210"
                                                     required
                                                     value={data.phone}

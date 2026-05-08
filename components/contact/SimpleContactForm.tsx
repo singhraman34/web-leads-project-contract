@@ -70,14 +70,15 @@ export default function SimpleContactForm() {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form autoComplete="off" onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary ml-1">Full Name *</label>
                     <input 
                         required
                         type="text" 
-                        name="name"
+                        name="lead_name_field"
+                        autoComplete="new-password"
                         value={formData.name}
                         onChange={handleChange}
                         placeholder="John Doe"
@@ -89,7 +90,8 @@ export default function SimpleContactForm() {
                     <input 
                         required
                         type="tel" 
-                        name="phone"
+                        name="lead_phone_field"
+                        autoComplete="new-password"
                         value={formData.phone}
                         onChange={handleChange}
                         placeholder="+91 98765 43210"
@@ -103,7 +105,8 @@ export default function SimpleContactForm() {
                     <label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary ml-1">Email Address</label>
                     <input 
                         type="email" 
-                        name="email"
+                        name="lead_email_field"
+                        autoComplete="new-password"
                         value={formData.email}
                         onChange={handleChange}
                         placeholder="john@example.com"
