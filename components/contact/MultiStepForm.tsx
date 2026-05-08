@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import {
-    ChevronRight, Layout, CheckCircle2,
+    Layout, CheckCircle2,
     Calendar, MapPin, MessageSquare,
     Tag, User, Phone, Mail,
     Check, Sparkles, Building2, ArrowLeft
@@ -198,13 +198,6 @@ function FormContent() {
         }
     };
 
-    const handleNext = () => {
-        if (step < totalSteps) {
-            setDirection(1);
-            setStep(prev => (prev + 1) as 1 | 2);
-            setTimeout(scrollToForm, 10);
-        }
-    };
 
     const handleBack = () => {
         if (step > 1) {

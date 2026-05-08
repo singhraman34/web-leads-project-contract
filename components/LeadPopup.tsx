@@ -64,7 +64,7 @@ export default function LeadPopup() {
     const { isVisible, setIsVisible } = usePopupTrigger();
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [submitError, setSubmitError] = useState<string | null>(null);
+
     const [data, setData] = useState({
         name: "",
         phone: "",
@@ -211,11 +211,6 @@ export default function LeadPopup() {
                                             />
                                         </div>
 
-                                        {submitError && (
-                                            <div className="p-3 bg-red-50 border border-red-100 rounded-xl text-red-600 text-[10px] font-bold flex items-center gap-2">
-                                                <span className="w-1.5 h-1.5 bg-red-600 rounded-full" /> {submitError}
-                                            </div>
-                                        )}
 
                                         <div className="pt-4">
                                             <Button
