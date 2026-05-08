@@ -22,29 +22,39 @@ export default function SimpleContactForm() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!formData.name.trim() || !formData.phone.trim()) return; // Native required fallback protection
+        if (!formData.name.trim() || !formData.phone.trim()) return; 
         
         setIsSubmitting(true);
 
+        // --- INSTANT FEEDBACK LOGIC ---
+        // 1. Show success screen immediately
+        setIsSubmitted(true);
+        
+        // 2. Prepare payload
         const payload = {
             formType: "enquiry",
             ...formData
         };
 
+        // 3. Clear form data immediately
+        setFormData({ name: "", phone: "", email: "", service: "", message: "" });
+
         try {
+            // 4. Trigger background request (do not block UI)
             const response = await fetch("/api/contact", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(payload),
+                keepalive: true,
             });
             
-            if (!response.ok) throw new Error("Backend failed");
-            setIsSubmitted(true);
-            setFormData({ name: "", phone: "", email: "", service: "", message: "" });
+            if (!response.ok) {
+                console.warn("Background simple contact submission failed");
+            }
         } catch (error) {
-            console.error("Submission failed", error);
+            console.error("Simple contact background submission error", error);
         } finally {
             setIsSubmitting(false);
         }

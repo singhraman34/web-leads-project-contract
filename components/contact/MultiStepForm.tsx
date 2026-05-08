@@ -175,6 +175,16 @@ function FormContent() {
     const totalSteps = 2;
     const progress = (step / totalSteps) * 100;
 
+    const scrollToForm = () => {
+        const el = document.getElementById("quote-form-section");
+        if (el) {
+            const y = el.getBoundingClientRect().top + window.scrollY - 100;
+            window.scrollTo({ top: y, behavior: "smooth" });
+        } else {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+    };
+
     const handleBasicSubmit = async () => {
         if (!isStep1Complete || isSubmitting) return;
 
@@ -182,7 +192,7 @@ function FormContent() {
         try {
             setDirection(1);
             setStep(2);
-            window.scrollTo({ top: 0, behavior: "smooth" });
+            setTimeout(scrollToForm, 10);
         } finally {
             setIsSubmitting(false);
         }
@@ -192,7 +202,7 @@ function FormContent() {
         if (step < totalSteps) {
             setDirection(1);
             setStep(prev => (prev + 1) as 1 | 2);
-            window.scrollTo({ top: 0, behavior: "smooth" });
+            setTimeout(scrollToForm, 10);
         }
     };
 
@@ -200,6 +210,7 @@ function FormContent() {
         if (step > 1) {
             setDirection(-1);
             setStep(prev => (prev - 1) as 1 | 2);
+            setTimeout(scrollToForm, 10);
         }
     };
 
@@ -255,6 +266,15 @@ function FormContent() {
         setIsSubmitting(true);
         setSubmitError(null);
 
+        // --- INSTANT FEEDBACK LOGIC ---
+        // 1. Show success screen immediately
+        setIsSubmitted(true);
+        setTimeout(scrollToForm, 10);
+        
+        // 2. Clear stored data immediately
+        localStorage.removeItem("quote_v3_data");
+        sessionStorage.removeItem("leadPopupData");
+
         // Map exactly to Google Apps Script expected keys
         const compatiblePayload = {
             name: sourceData.name,
@@ -272,25 +292,21 @@ function FormContent() {
         };
 
         try {
+            // 3. Trigger background request (do not block UI)
             const response = await fetch("/api/contact", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(compatiblePayload),
+                keepalive: true, // Ensure request finishes even if page navigates
             });
 
-            if (response.ok) {
-                setIsSubmitted(true);
-                localStorage.removeItem("quote_v3_data");
-                sessionStorage.removeItem("leadPopupData"); // Clear data after successful submission
-            } else {
-                const errorData = await response.json();
-                throw new Error(errorData.error || "Server failed to process lead");
+            if (!response.ok) {
+                console.warn("Background submission failed silently to user");
             }
         } catch (error) {
-            console.error("Submission failed:", error);
-            setSubmitError(error instanceof Error ? error.message : "Network error. Please try again or call us.");
+            console.error("Submission background error:", error);
         } finally {
             setIsSubmitting(false);
         }

@@ -86,9 +86,17 @@ export default function LeadPopup() {
         if (!isFormValid || isSubmitting) return;
 
         setIsSubmitting(true);
-        try {
-            sessionStorage.setItem("leadPopupData", JSON.stringify(data));
+        
+        // --- INSTANT FEEDBACK LOGIC ---
+        // 1. Save to storage immediately
+        sessionStorage.setItem("leadPopupData", JSON.stringify(data));
+        localStorage.setItem("leadSubmitted", "true");
 
+        // 2. Show success screen immediately
+        setIsSubmitted(true);
+
+        try {
+            // 3. Trigger background request (do not block UI)
             const response = await fetch("/api/contact", {
                 method: "POST",
                 headers: {
@@ -100,18 +108,14 @@ export default function LeadPopup() {
                     area: data.location,
                     status: "partial"
                 }),
+                keepalive: true, // Important for background processing during navigation
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || "Failed to submit partial lead");
+                console.warn("Background lead submission failed silently to user");
             }
-
-            localStorage.setItem("leadSubmitted", "true");
-            setIsSubmitted(true);
         } catch (error) {
-            console.error("Popup submission failed", error);
-            setSubmitError(error instanceof Error ? error.message : "Something went wrong. Please try again.");
+            console.error("Popup submission background error", error);
         } finally {
             setIsSubmitting(false);
         }
